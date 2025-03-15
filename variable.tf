@@ -63,6 +63,12 @@ variable "container_images" {
   }
 }
 
+variable "container_ports" {
+  description = "List of container ports"
+  type        = list(number)
+  default     = [8080, 8081, 8082, 8083, 8084]
+  
+}
 ### RDS and DynamoDB Variables
 
 variable "db_allocated_storage" {
