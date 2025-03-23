@@ -1,5 +1,3 @@
-
-
 resource "aws_ecs_cluster" "main" {
   name = var.ecs_cluster_name
 }
@@ -13,11 +11,9 @@ resource "aws_ecs_task_definition" "api_tasks" {
   cpu                      = var.ecs_task_cpu
 
   container_definitions = jsonencode([
-    for name, image in var.container_images : {
-      name        = name
-      image       = image
-      memory      = var.ecs_task_memory
-      cpu         = var.ecs_task_cpu
+    for index, name in keys(var.container_images) : {
+      name  = name
+      image = var.container_images[name]
 
       portMappings = [
         {
@@ -39,7 +35,10 @@ resource "aws_ecs_service" "app-service" {
 
   network_configuration {
     security_groups  = [aws_security_group.ecs.id]
-    subnets          = [aws_subnet.private.id]
+    subnets          = [
+      "subnet-047aa7f2b28903f0f",  # 10.0.1.0/24
+      "subnet-06e8182b21aed314e"   # 10.0.2.0/24
+    ]
     assign_public_ip = false  # Set to true if using public subnets
   }
 }
