@@ -3,17 +3,30 @@ resource "aws_lb" "nlb" {
     internal           = false
     load_balancer_type = "network"
     security_groups    = []
-    subnets            = ["subnet-xxxxxxxx", "subnet-yyyyyyyy"]
+    subnets            = ["subnet-x", "subnet-y"]
 
     enable_deletion_protection = false
+}
+
+resource "aws_lb" "alb" {
+    name               = "private-alb"
+    internal           = true  
+    load_balancer_type = "application"
+    security_groups    = [aws_security_group.alb_sg.id]
+    subnets            = ["subnet-a", "subnet-b"]
 }
 
 resource "aws_lb_target_group" "alb_target_group" {
     name        = "alb-target-group"
     port        = 80
-    protocol    = "HTTP"
-    vpc_id      = "vpc-xxxxxxxx"
-    target_type = "alb"
+    protocol    = "TCP"  
+    vpc_id      = "vpc-id"
+    target_type = "ip"  
+
+    health_check {
+        protocol = "TCP"
+        port     = "traffic-port"
+    }
 }
 
 resource "aws_lb_listener" "nlb_listener" {
@@ -22,7 +35,7 @@ resource "aws_lb_listener" "nlb_listener" {
     protocol          = "TCP"
 
     default_action {
-        type               = "forward"
-        target_group_arn   = aws_lb_target_group.alb_target_group.arn
+        type             = "forward"
+        target_group_arn = aws_lb_target_group.alb_target_group.arn
     }
 }

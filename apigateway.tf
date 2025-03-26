@@ -12,7 +12,7 @@ resource "aws_apigatewayv2_vpc_link" "vpc_link" {
 resource "aws_apigatewayv2_integration" "nlb_integration" {
   api_id           = aws_apigatewayv2_api.http_api.id
   integration_type = "HTTP_PROXY"
-  integration_uri  = aws_lb.nlb.arn
+  integration_uri  = aws_lb_target_group.alb_tg.arn # Replace with the ARN of the target group
   connection_type  = "VPC_LINK"
   connection_id    = aws_apigatewayv2_vpc_link.vpc_link.id
 }
