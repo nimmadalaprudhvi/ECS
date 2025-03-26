@@ -1,7 +1,3 @@
-provider "aws" {
-  region = "eu-west-1" # Change to your preferred region
-}
-
 # S3 bucket for static content
 resource "aws_s3_bucket" "public_bucket" {
   bucket = "binq-co-uk"
